@@ -20,7 +20,7 @@ public class PermisionService {
         return permisionRepository.findAll();
     }
 
-    public Optional<Permision> getById(Long id) {
+    public Optional<Permision> getById(Integer id) {
         return permisionRepository.findById(id);
     }
 
@@ -28,7 +28,7 @@ public class PermisionService {
         return permisionRepository.save(obj);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         permisionRepository.deleteById(id);
     }
 }

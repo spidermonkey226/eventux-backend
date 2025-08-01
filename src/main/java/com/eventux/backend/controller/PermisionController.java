@@ -23,7 +23,7 @@ public class PermisionController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Permision> getById(@PathVariable Long id) {
+    public Optional<Permision> getById(@PathVariable Integer id) {
         return permisionService.getById(id);
     }
 
@@ -33,7 +33,7 @@ public class PermisionController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         permisionService.deleteById(id);
     }
 }

@@ -20,7 +20,7 @@ public class FilesService {
         return filesRepository.findAll();
     }
 
-    public Optional<Files> getById(Long id) {
+    public Optional<Files> getById(Integer id) {
         return filesRepository.findById(id);
     }
 
@@ -28,7 +28,7 @@ public class FilesService {
         return filesRepository.save(obj);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         filesRepository.deleteById(id);
     }
 }

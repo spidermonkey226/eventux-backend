@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "event")
 @Data
@@ -15,11 +17,16 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long EventID;
+    @Column(name = "EventID")
+    private Integer eventID;
+
 
     private String EventName;
 
-    private String EventCatgory;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "EventCatgory")
+    private EventCategory eventCatgory;
+
 
     @ManyToOne
     @JoinColumn(name = "address")
@@ -33,10 +40,14 @@ public class Event {
     @JoinColumn(name = "User_Host_ID")
     private User host;
 
-    private String inviteList;
+
 
     @ManyToOne
     @JoinColumn(name = "Files_fileID")
     private Files files;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invited> inviteList;
+
 
 }

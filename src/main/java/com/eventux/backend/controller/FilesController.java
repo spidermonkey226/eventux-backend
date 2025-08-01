@@ -23,7 +23,7 @@ public class FilesController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Files> getById(@PathVariable Long id) {
+    public Optional<Files> getById(@PathVariable Integer id) {
         return filesService.getById(id);
     }
 
@@ -33,7 +33,7 @@ public class FilesController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         filesService.deleteById(id);
     }
 }

@@ -10,15 +10,17 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Permision {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long permision_ID;
+    @Column(name = "permision_ID") // match DB column exactly
+    private Integer id;
 
-    private String Permision_name;
+    @Column(name = "permision_name")
+    private String permisionName;
 
     private String role;
 
+    private String name;
 }

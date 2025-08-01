@@ -14,11 +14,16 @@ import lombok.AllArgsConstructor;
 
 public class Invited {
 
+
     @EmbeddedId
     private InvitedId id;
 
-    private String email;
-
+    @Column(name = "firstName")
     private String firstName;
+
+    @ManyToOne
+    @MapsId("eventId") // Link the field inside InvitedId
+    @JoinColumn(name = "EventId", referencedColumnName = "EventID")
+    private Event event;
 
 }

@@ -14,14 +14,24 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUser;
+    @Column(name = "idUser")
+    private Integer idUser;
 
+    @Column(name = "firstName")
     private String firstName;
+
+    @Column(name = "lastName")
     private String lastName;
+
+    @Column(name = "phone")
     private String phone;
+
+    @Column(name = "email")
     private String email;
 
+
     @ManyToOne
-    @JoinColumn(name = "permision")
+    @JoinColumn(name = "permision", referencedColumnName = "permision_ID")
     private Permision permision;
 }
+
