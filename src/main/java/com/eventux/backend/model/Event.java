@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -49,5 +50,8 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invited> inviteList;
 
-
+    private String comments;
+    private Integer expectedPeople;
+    @Column(name = "event_date")
+    private LocalDate eventDate;
 }

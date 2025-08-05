@@ -20,7 +20,7 @@ public class AddressService {
         return addressRepository.findAll();
     }
 
-    public Optional<Address> getById(Long id) {
+    public Optional<Address> getById(int id) {
         return addressRepository.findById(id);
     }
 
@@ -28,7 +28,7 @@ public class AddressService {
         return addressRepository.save(obj);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(int id) {
         addressRepository.deleteById(id);
     }
 }

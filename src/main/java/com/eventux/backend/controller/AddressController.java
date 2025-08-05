@@ -23,7 +23,7 @@ public class AddressController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Address> getById(@PathVariable Long id) {
+    public Optional<Address> getById(@PathVariable int id) {
         return addressService.getById(id);
     }
 
@@ -33,7 +33,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable int id) {
         addressService.deleteById(id);
     }
 }

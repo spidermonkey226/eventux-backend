@@ -1,30 +1,27 @@
 package com.eventux.backend.model;
 
+import com.eventux.backend.model.City;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "address")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
-    private Integer addressId;
+    private int addressId;
 
+    @Enumerated(EnumType.STRING)
+    private City city;
 
-    private String City;
+    @Column(name = "Street_name")
+    private String streetName;
 
-    private String Street_name;
+    @Column(name = "Street_number")
+    private String streetNumber;
 
-    private String Street_number;
-
-    private String Post_Code;
-
+    @Column(name = "Post_Code")
+    private String postCode;
 }

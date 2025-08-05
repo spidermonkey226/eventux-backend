@@ -1,0 +1,22 @@
+### Create a new event
+POST http://localhost:8080/api/events
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGFhQGdtYWlsLmNvbSIsImlhdCI6MTc1NDQwOTkwMiwiZXhwIjoxNzU0NDEzNTAyfQ.2gzixAGmO_0GwMcp6Foghc_T_anRS15KNLGoPkHScUw
+
+{
+  "eventName": "Sample Wedding",
+  "email": "alaa@gmail.com",
+  "phone": "0542115671",
+  "date": "2025-08-20",
+  "people": 100,
+  "eventCategory": "Weddings",
+  "city": "Tel Aviv",
+  "streetName": "Rothschild",
+  "streetNumber": "10",
+  "postCode": "12345",
+  "hasManager": false,
+  "managerName": "",
+  "managerEmail": "",
+  "managerPhone": "",
+  "comments": "Please arrange a tent and music system"
+}

@@ -1,7 +1,9 @@
 package com.eventux.backend.controller;
 
+import com.eventux.backend.dto.AddEventRequest;
 import com.eventux.backend.model.Event;
 import com.eventux.backend.service.EventService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +30,13 @@ public class EventController {
     }
 
     @PostMapping
-    public Event create(@RequestBody Event obj) {
-        return eventService.save(obj);
+    public Event create(@RequestBody AddEventRequest request) {
+        System.out.println(">>> create() called with: " + request.getEventName());
+        return eventService.create(request);
     }
+
+
+
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
