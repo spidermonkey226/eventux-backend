@@ -13,8 +13,11 @@ public class Address {
     @Column(name = "address_id")
     private int addressId;
 
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "City")
     private City city;
+
 
     @Column(name = "Street_name")
     private String streetName;

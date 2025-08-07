@@ -60,7 +60,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*"); // or use "http://localhost:4200" if you want to restrict
+        configuration.addAllowedOrigin("http://localhost:4200"); // or use "http://localhost:4200" if you want to restrict
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);

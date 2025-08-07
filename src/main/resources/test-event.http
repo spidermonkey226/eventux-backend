@@ -1,7 +1,7 @@
 ### Create a new event
 POST http://localhost:8080/api/events
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGFhQGdtYWlsLmNvbSIsImlhdCI6MTc1NDQwOTkwMiwiZXhwIjoxNzU0NDEzNTAyfQ.2gzixAGmO_0GwMcp6Foghc_T_anRS15KNLGoPkHScUw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGFhQGdtYWlsLmNvbSIsImlhdCI6MTc1NDQyMDMwNywiZXhwIjoxNzU0NDIzOTA3fQ.6zhqTGNvK9jzUi1LTPRMX4vz6ViUgeavV0dGBnQ4qa8
 
 {
   "eventName": "Sample Wedding",
