@@ -15,16 +15,16 @@ public class Address {
 
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "City")
+    @Column(name = "City",nullable = false)
     private City city;
 
 
-    @Column(name = "Street_name")
+    @Column(name = "Street_name",nullable = false)
     private String streetName;
 
-    @Column(name = "Street_number")
+    @Column(name = "Street_number",nullable = false)
     private String streetNumber;
 
-    @Column(name = "Post_Code")
+    @Column(name = "Post_Code",nullable = false)
     private String postCode;
 }

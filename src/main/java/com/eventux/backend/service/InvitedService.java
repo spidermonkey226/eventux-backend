@@ -20,7 +20,9 @@ public class InvitedService {
     public List<Invited> getAll() {
         return invitedRepository.findAll();
     }
-
+    public List<Invited> findByEventId(Integer eventId) {
+        return invitedRepository.findById_EventId(eventId); // or your existing query method
+    }
     public Optional<Invited> getById(InvitedId id) {
         return invitedRepository.findById(id);
     }
@@ -28,7 +30,9 @@ public class InvitedService {
     public Invited save(Invited obj) {
         return invitedRepository.save(obj);
     }
-
+    public boolean exists(Integer eventId, String emailLower) {
+        return invitedRepository.existsByEvent_EventIDAndId_EmailIgnoreCase(eventId, emailLower);
+    }
     public void deleteById(InvitedId id) {
         invitedRepository.deleteById(id);
     }

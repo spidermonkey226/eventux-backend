@@ -76,7 +76,7 @@ public class EventCreationService {
         List<Invited> inviteds = new ArrayList<>();
         for (EventCreationRequest.InviteDTO invite : request.getInviteList()) {
             InvitedId invitedId = new InvitedId(event.getEventID(), invite.getEmail());
-            Invited invited = new Invited(invitedId, invite.getFirstName(), event);
+            Invited invited = new Invited(invitedId, invite.getFirstName(),invite.getNote(), event);
             inviteds.add(invited);
         }
         invitedRepository.saveAll(inviteds);

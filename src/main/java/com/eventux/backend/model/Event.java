@@ -30,7 +30,7 @@ public class Event {
 
 
     @ManyToOne
-    @JoinColumn(name = "address")
+    @JoinColumn(name = "address",nullable = false)
     private Address address;
 
     @ManyToOne

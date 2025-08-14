@@ -34,5 +34,6 @@ public class EventCreationRequest {
     public static class InviteDTO {
         private String email;
         private String firstName;
+        private String note;
     }
 }

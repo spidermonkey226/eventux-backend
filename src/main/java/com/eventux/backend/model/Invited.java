@@ -20,10 +20,12 @@ public class Invited {
 
     @Column(name = "firstName")
     private String firstName;
-
+    @Column(name = "note")
+    private String note;
     @ManyToOne
     @MapsId("eventId") // Link the field inside InvitedId
     @JoinColumn(name = "EventId", referencedColumnName = "EventID")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Event event;
 
 }

@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import jakarta.persistence.Lob;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "user")
@@ -36,5 +40,14 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "permision", referencedColumnName = "permision_ID")
     private Permision permision;
+    @Lob
+    @JsonIgnore
+    @JdbcTypeCode(SqlTypes.LONGVARBINARY)          // 👈 force Hibernate to treat it as long varbinary
+    @Column(name = "avatar", columnDefinition = "LONGBLOB") // 👈 match actual MySQL type
+    private byte[] avatar;
+
+    @Column(name = "avatar_content_type")
+    private String avatarContentType;
+
 }
 

@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        System.out.println(">>> Checking shouldNotFilter for path: " + path);
+        // allow signin/signup without JWT
         return path.equals("/api/auth/signin") || path.equals("/api/auth/signup");
     }
 
@@ -40,13 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-        System.out.println(">>> JwtAuthenticationFilter HIT for: " + path);
-
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println(">>> No Authorization header or wrong format");
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,32 +50,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = authHeader.substring(7);
         String userEmail = jwtService.extractUsername(jwt);
 
-        System.out.println(">>> Extracted userEmail: " + userEmail);
-        System.out.println(">>> JwtAuthenticationFilter HIT for: " + request.getRequestURI());
-        System.out.println(">>> Authorization Header: " + request.getHeader("Authorization"));
-        System.out.println(">>> Extracted userEmail from token: " + userEmail);
-        System.out.println(">>> Setting Authentication for: " + userEmail);
-        System.out.println(">>> Current SecurityContext: " + SecurityContextHolder.getContext().getAuthentication());
-
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             var user = userRepository.findByEmail(userEmail).orElse(null);
+
+            // Make sure your JwtService.isTokenValid(...) signature matches this usage.
             if (user != null && jwtService.isTokenValid(jwt, userEmail)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userEmail,
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_USER")) // ✅ FIXED HERE
-                        );
-
-
+                var authToken = new UsernamePasswordAuthenticationToken(
+                        userEmail,
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                System.out.println(">>> Authentication set for: " + userEmail);
-            } else {
-                System.out.println(">>> Invalid token or user not found");
             }
-        } else {
-            System.out.println(">>> Skipping auth setup");
         }
 
         filterChain.doFilter(request, response);
