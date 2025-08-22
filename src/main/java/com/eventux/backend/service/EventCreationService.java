@@ -18,7 +18,7 @@ public class EventCreationService {
     private final AddressRepository addressRepository;
     private final FilesRepository filesRepository;
     private final TableEntityRepository tableRepository;
-    private final InvitedRepository invitedRepository;
+    private final InvitedService invitedService;
 
     public EventCreationService(
             EventRepository eventRepository,
@@ -26,14 +26,14 @@ public class EventCreationService {
             AddressRepository addressRepository,
             FilesRepository filesRepository,
             TableEntityRepository tableRepository,
-            InvitedRepository invitedRepository
+            InvitedService invitedService
     ) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.filesRepository = filesRepository;
         this.tableRepository = tableRepository;
-        this.invitedRepository = invitedRepository;
+        this.invitedService = invitedService;
     }
 
     public Event createEvent(EventCreationRequest request) {
@@ -74,17 +74,25 @@ public class EventCreationService {
 
         // 🪑 Save invited guests
         List<Invited> inviteds = new ArrayList<>();
-        for (EventCreationRequest.InviteDTO invite : request.getInviteList()) {
-            InvitedId invitedId = new InvitedId(event.getEventID(), invite.getEmail());
-            Invited invited = new Invited(invitedId, invite.getFirstName(),invite.getNote(), event);
-            inviteds.add(invited);
+        if (request.getInviteList() != null) {
+            for (EventCreationRequest.InviteDTO dto : request.getInviteList()) {
+                Invited inv = new Invited();
+                inv.setId(new InvitedId(event.getEventID(), dto.getEmail().trim().toLowerCase()));
+                inv.setFirstName(dto.getFirstName());
+                inv.setNote(dto.getNote());
+                inv.setEvent(event);
+                Invited saved = invitedService.createInviteAndEmail(inv, event.getEventName());
+                inviteds.add(saved);
+            }
         }
-        invitedRepository.saveAll(inviteds);
+
 
         // 🪑 Save tables
-        for (EventCreationRequest.TableDTO tableDTO : request.getTables()) {
-            TableEntity table = new TableEntity(tableDTO.getTable_number(), tableDTO.getChair_count());
-            tableRepository.save(table); // global table
+        if (request.getTables() != null) {
+            for (EventCreationRequest.TableDTO tableDTO : request.getTables()) {
+                TableEntity table = new TableEntity(tableDTO.getTable_number(), tableDTO.getChair_count());
+                tableRepository.save(table);
+            }
         }
 
         return event;
