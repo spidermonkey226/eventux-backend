@@ -29,10 +29,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        // allow preflight
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true;
+
         String path = request.getServletPath();
-        // allow signin/signup without JWT
-        return path.equals("/api/auth/signin") || path.equals("/api/auth/signup");
+        String method = request.getMethod();
+
+        // existing behavior (signin/signup)
+        if (path.equals("/api/auth/signin") || path.equals("/api/auth/signup")) return true;
+
+        // NEW: public RSVP endpoints
+        if (path.equals("/api/inviteds/by-token") && "GET".equalsIgnoreCase(method)) return true;
+        if ("PUT".equalsIgnoreCase(method)
+                && path.startsWith("/api/inviteds/")
+                && path.endsWith("/status")) return true;
+
+        return false;
     }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

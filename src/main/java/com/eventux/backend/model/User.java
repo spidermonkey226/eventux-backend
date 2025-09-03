@@ -1,5 +1,6 @@
 package com.eventux.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,8 @@ import jakarta.persistence.Lob;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "user")
@@ -49,5 +52,15 @@ public class User {
     @Column(name = "avatar_content_type")
     private String avatarContentType;
 
+    @Enumerated(EnumType.ORDINAL)
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    @Column(name = "subscription_level")
+    private SubscriptionLevel subscriptionLevel = SubscriptionLevel.Free;
+
+    @Column(name = "subscription_start")
+    private LocalDate subscriptionStart;
+
+    @Column(name = "subscription_end")
+    private LocalDate subscriptionEnd;
 }
 

@@ -52,7 +52,9 @@ public class AuthController {
             u.setPhone(req.phone());
             u.setPassword(passwordEncoder.encode(req.password()));
             u.setPermision(perm);
-
+            u.setSubscriptionLevel(com.eventux.backend.model.SubscriptionLevel.Free);
+            u.setSubscriptionStart(java.time.LocalDate.now());
+            u.setSubscriptionEnd(null);
             userRepository.save(u);
             return ResponseEntity.ok(Map.of("message", "User registered successfully"));
         } catch (Exception e) {

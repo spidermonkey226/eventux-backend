@@ -87,6 +87,9 @@ public class UserController {
                     if (patch.getPermision() != null) { // note: 'permision' in your entity
                         user.setPermision(patch.getPermision());
                     }
+                    if (patch.getSubscriptionLevel() != null) user.setSubscriptionLevel(patch.getSubscriptionLevel());
+                    if (patch.getSubscriptionStart() != null) user.setSubscriptionStart(patch.getSubscriptionStart());
+                    if (patch.getSubscriptionEnd() != null) user.setSubscriptionEnd(patch.getSubscriptionEnd());
                     return ResponseEntity.ok(userService.save(user));
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("User not found")));
