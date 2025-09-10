@@ -7,6 +7,9 @@ import com.eventux.backend.model.User;
 import com.eventux.backend.repository.PermisionRepository;
 import com.eventux.backend.repository.UserRepository;
 import com.eventux.backend.service.JwtService;
+// 👇 ADD: import the reset service
+import com.eventux.backend.service.PasswordResetService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +26,12 @@ import java.util.Optional;
 public class AuthController {
 
     private final UserRepository userRepository;
-    private final PermisionRepository permisionRepository; // 👈 add this repo
+    private final PermisionRepository permisionRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+
+    // 👇 ADD: inject the password reset service
+    private final PasswordResetService passwordResetService;
 
     // Keep payload clean with a minimal DTO for signup
     public static record SignUpRequest(
@@ -86,5 +92,34 @@ public class AuthController {
         System.out.println("Password matches. Generating token...");
         String token = jwtService.generateToken(user.getEmail());
         return ResponseEntity.ok(new JwtResponse("Sign in successful", token, user));
+    }
+
+
+
+    // DTOs for the reset endpoints
+    public record ForgotReq(String email) {}
+    public record ResetReq(String token, String password) {}
+    public record Message(String message) {}
+
+    /** POST /api/auth/forgot-password  { "email": "x@y.com" } */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgot(@RequestBody ForgotReq req) {
+        // always respond success (no user enumeration)
+        passwordResetService.requestReset(req.email());
+        return ResponseEntity.ok(new Message("If an account exists for that email, a reset link has been sent."));
+    }
+
+    /** POST /api/auth/reset-password  { "token": "...", "password": "..." } */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> reset(@RequestBody ResetReq req) {
+        if (req.password() == null || req.password().isBlank()) {
+            return ResponseEntity.badRequest().body(new Message("Password must not be blank."));
+        }
+        try {
+            passwordResetService.resetPassword(req.token(), req.password());
+            return ResponseEntity.ok(new Message("Password updated."));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(new Message("Could not reset password. The link may have expired."));
+        }
     }
 }
