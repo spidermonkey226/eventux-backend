@@ -113,9 +113,18 @@ public class TicketController {
         var ticketOpt = ticketService.getById(id);
         if (ticketOpt.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 
+        Ticket t = ticketOpt.get();
+        if ("CLOSED".equalsIgnoreCase(t.getTicketStatus())) {
+            // Block new messages on closed tickets
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+            // (Optionally) return ResponseEntity.status(HttpStatus.CONFLICT).body(new Message("Ticket is closed"));
+        }
+
         String text = body != null ? body.get("text") : null;
         String sender = (body != null && body.get("sender") != null) ? body.get("sender") : "ADMIN";
         if (text == null || text.isBlank()) return ResponseEntity.badRequest().body(null);
+
+        Ticket ticket = ticketOpt.get();
 
         TicketMessage m = new TicketMessage();
         m.setTicket(ticketOpt.get());
@@ -123,6 +132,13 @@ public class TicketController {
         m.setText(text.trim());
         m = ticketMessageRepo.save(m);
 
+        if ("USER".equalsIgnoreCase(sender)) {
+            // reporter authored it
+            m.setAuthor(ticket.getReporter()); // may be null if anonymous
+        } else {
+            m.setAuthor(null);
+        }
+        m = ticketMessageRepo.save(m);
         return ResponseEntity.status(HttpStatus.CREATED).body(TicketMessageDTO.from(m));
     }
     @GetMapping("/by-reporter")

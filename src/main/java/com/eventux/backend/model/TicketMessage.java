@@ -18,6 +18,10 @@ public class TicketMessage {
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
+
     @Column(nullable = false, length = 16)
     private String sender; // "USER" or "ADMIN"
 
