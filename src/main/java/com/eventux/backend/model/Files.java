@@ -19,11 +19,14 @@ public class Files {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer fileID;
 
-    private String FileName;
+    @Column(name = "file_name")   // map to lowercase column
+    private String fileName;
 
-    private String File_Size;
+    @Column(name = "file_size")
+    private String fileSize;
 
-    private String file_type;
+    @Column(name = "file_type")
+    private String fileType;
 
     @ManyToOne
     @JoinColumn(name = "UserID")

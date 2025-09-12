@@ -82,4 +82,30 @@ public class InvitedService {
             return invitedRepository.save(inv);
         });
     }
+    @Transactional
+    public Optional<Invited> resendInviteEmail(Integer eventId, String email, String eventName) {
+        InvitedId id = new InvitedId(eventId, email.toLowerCase());
+
+        return invitedRepository.findById(id).map(inv -> {
+            // generate a new token + expiry (just like create)
+            String token = TokenUtil.newUrlSafeToken(32);
+            inv.setToken(token);
+            inv.setTokenExpiresAt(Instant.now().plus(Duration.ofHours(ttlHours)));
+            inv.setComing(null); // keep as pending
+
+            Invited saved = invitedRepository.save(inv);
+
+            // ✅ reuse the same MailService logic
+            mailService.sendInviteEmail(
+                    saved.getId().getEmail(),
+                    saved.getFirstName(),
+                    saved.getId().getEventId(),
+                    eventName,
+                    token
+            );
+
+            return saved;
+        });
+    }
+
 }

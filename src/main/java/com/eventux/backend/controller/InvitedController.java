@@ -105,6 +105,31 @@ public class InvitedController {
                 // typed body(null) to match ResponseEntity<RsvpInvitedDTO>
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).<RsvpInvitedDTO>body(null));
     }
+    @PostMapping("/{eventId}/{email}/resend")
+    public ResponseEntity<?> resend(@PathVariable Integer eventId,
+                                    @PathVariable String email) {
+        Event event = eventRepository.findById(eventId.longValue())
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        return invitedService.resendInviteEmail(eventId, email, event.getEventName())
+                .map(inv -> ResponseEntity.ok(Map.of("message", "Invitation re-sent")))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "Invite not found")));
+    }
+
+    @GetMapping("/{eventId}/me")
+    public ResponseEntity<RsvpInvitedDTO> getMine(@PathVariable Integer eventId) {
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getName() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = auth.getName().toLowerCase();
+
+        return invitedService.getById(new InvitedId(eventId, email))
+                .map(RsvpInvitedDTO::from)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 
     @PutMapping("/{eventId}/{email}/status")
     public ResponseEntity<Void> updateStatus(@PathVariable Integer eventId,

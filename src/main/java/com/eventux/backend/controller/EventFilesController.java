@@ -89,12 +89,31 @@ public class EventFilesController {
                 .map(f -> Map.of(
                         "id", f.getFileID(),
                         "name", f.getFileName(),
-                        "size", f.getFile_Size(),
-                        "type", f.getFile_type(),
+                        "size", f.getFileSize(),
+                        "type", f.getFileType(),
                         "uploader", Map.of(
                                 "id", f.getUser() != null ? f.getUser().getIdUser() : null,
                                 "email", f.getUser() != null ? f.getUser().getEmail() : null
                         )
+                ))
+                .toList();
+
+        return ResponseEntity.ok(list);
+    }
+    // List only current user's files for this event
+    @GetMapping("/mine")
+    public ResponseEntity<?> listMine(@PathVariable Integer eventId) {
+        var me = auth.meOrThrow();
+        var ev = findEvent(eventId);
+        if (!canView(me, ev, eventId)) return forbidden();
+
+        var list = files.findByEvent_EventID(eventId).stream()
+                .filter(f -> f.getUser() != null && f.getUser().getIdUser().equals(me.getIdUser()))
+                .map(f -> Map.of(
+                        "id", f.getFileID(),
+                        "name", f.getFileName(),
+                        "size", f.getFileSize(),
+                        "type", f.getFileType()
                 ))
                 .toList();
 
@@ -113,8 +132,8 @@ public class EventFilesController {
             try {
                 var ent = new Files();
                 ent.setFileName(mf.getOriginalFilename());
-                ent.setFile_Size(String.valueOf(mf.getSize()));
-                ent.setFile_type(mf.getContentType());
+                ent.setFileSize(String.valueOf(mf.getSize()));
+                ent.setFileType(mf.getContentType());
                 ent.setUser(me);
                 ent.setEvent(ev);
                 ent.setContent(mf.getBytes());
@@ -146,7 +165,7 @@ public class EventFilesController {
                 URLEncoder.encode(filename, StandardCharsets.UTF_8);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(f.getFile_type() != null ? f.getFile_type() : MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .contentType(MediaType.parseMediaType(f.getFileType() != null ? f.getFileType() : MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .header(HttpHeaders.CONTENT_DISPOSITION, dispo)
                 .body(f.getContent());
     }
