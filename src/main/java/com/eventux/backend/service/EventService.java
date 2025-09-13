@@ -58,6 +58,10 @@ public class EventService {
         String cur = current != null ? current.getRole() : null;
         return roleRank(cur) >= roleRank(target.getRole());
     }
+    public Event save(Event e) {
+        return eventRepository.save(e);
+    }
+
 
     private void ensureRole(User user, Permision target) {
         if (!isAtLeast(user.getPermision(), target)) {

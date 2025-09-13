@@ -34,9 +34,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Integer id) {
-        return userService.getById(id);
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+        return userService.getById(id)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("User not found")));
     }
+
 
     @PostMapping
     public User createUser(@RequestBody User user) {
@@ -46,9 +49,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+        if (userService.getById(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Message("User not found"));
+        }
         userService.deleteById(id);
+        return ResponseEntity.ok(new Message("User deleted"));
     }
+
 
     // ---------- Auth-aware helpers ----------
 

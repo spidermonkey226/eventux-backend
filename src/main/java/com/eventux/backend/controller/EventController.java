@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +31,33 @@ public class EventController {
     public Optional<Event> getById(@PathVariable Long id) {
         return eventService.getById(id);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AddEventRequest req) {
+        return eventService.getById(id)
+                .<ResponseEntity<?>>map(existing -> {
+                    existing.setEventName(req.getEventName());
+                    existing.setEventCatgory(req.getEventCategory()); // must be enum
+                    existing.setEventDate(LocalDate.parse(req.getDate()));
+                    existing.setExpectedPeople(req.getPeople());
+                    existing.setComments(req.getComments());
+
+                    // TODO: handle address update properly
+                    if (existing.getAddress() != null) {
+                        existing.getAddress().setStreetName(req.getStreetName());
+                        existing.getAddress().setStreetNumber(req.getStreetNumber());
+                        existing.getAddress().setPostCode(req.getPostCode());
+                        existing.getAddress().setCity(req.getCity());
+                    }
+
+                    // TODO: handle host/manager update by looking up users by email
+                    // (similar to create() logic)
+
+                    return ResponseEntity.ok(eventService.save(existing));
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "Event not found")));
+    }
+
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody AddEventRequest request) {
@@ -63,7 +91,13 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        if (eventService.getById(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Event not found"));
+        }
         eventService.deleteById(id);
+        return ResponseEntity.ok(Map.of("message", "Event deleted"));
     }
+
 }
