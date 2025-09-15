@@ -1,5 +1,6 @@
 package com.eventux.backend.controller;
 
+import com.eventux.backend.model.SubscriptionLevel;
 import com.eventux.backend.model.User;
 import com.eventux.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +45,13 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        // Always start as Free with no expiry
+        user.setSubscriptionLevel(SubscriptionLevel.Free);
+        user.setSubscriptionStart(LocalDate.now());
+        user.setSubscriptionEnd(null);
         // If this endpoint is used by admins, you can hash here:
         // if (user.getPassword() != null) user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.save(user);
@@ -95,7 +104,22 @@ public class UserController {
                     if (patch.getPermision() != null) { // note: 'permision' in your entity
                         user.setPermision(patch.getPermision());
                     }
-                    if (patch.getSubscriptionLevel() != null) user.setSubscriptionLevel(patch.getSubscriptionLevel());
+                    if (patch.getSubscriptionLevel() != null) {
+                        if (patch.getSubscriptionLevel() == SubscriptionLevel.Free) {
+                            // Free: no expiry
+                            user.setSubscriptionLevel(SubscriptionLevel.Free);
+                            user.setSubscriptionStart(LocalDate.now());
+                            user.setSubscriptionEnd(null);
+                        } else {
+                            // Paid: always 30 days from today
+                            LocalDate start = LocalDate.now();
+                            LocalDate end = start.plusDays(30);
+
+                            user.setSubscriptionLevel(patch.getSubscriptionLevel());
+                            user.setSubscriptionStart(start);
+                            user.setSubscriptionEnd(end);
+                        }
+                    }
                     if (patch.getSubscriptionStart() != null) user.setSubscriptionStart(patch.getSubscriptionStart());
                     if (patch.getSubscriptionEnd() != null) user.setSubscriptionEnd(patch.getSubscriptionEnd());
                     return ResponseEntity.ok(userService.save(user));

@@ -32,12 +32,14 @@ public enum City {
     }
 
     @JsonCreator
-    public static City fromValue(String value) {
-        for (City city : City.values()) {
-            if (city.value.equalsIgnoreCase(value)) {
-                return city;
+    public static City fromJson(String value) {
+        // Try enum name first (TEL_AVIV), then fallback to label ("Tel Aviv")
+        for (City c : City.values()) {
+            if (c.name().equalsIgnoreCase(value) || c.value.equalsIgnoreCase(value)) {
+                return c;
             }
         }
         throw new IllegalArgumentException("Invalid city: " + value);
     }
+
 }

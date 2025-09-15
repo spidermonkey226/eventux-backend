@@ -26,4 +26,8 @@ public class Subscription {
 
     @Column(name = "max_events", nullable = false)
     private Integer maxEvents;
+
+    @Column(name = "price", nullable = false)
+    private Double price;
+
 }

@@ -90,9 +90,25 @@ public class EventService {
                 .orElseThrow(() -> new IllegalStateException("Permission id=2 (eventCreater) missing"));
         Permision managerPerm = permisionRepository.findById(3) // role: eventMangment
                 .orElseThrow(() -> new IllegalStateException("Permission id=3 (eventMangment) missing"));
+
         // Host must be at least eventCreater
         ensureRole(host, creatorPerm);
-
+        if (host.getSubscriptionLevel() != null) {
+            int requested = req.getPeople();
+            int maxAllowed = switch (host.getSubscriptionLevel()) {
+                case Free     -> 5;
+                case Basic    -> 20;
+                case Standard -> 50;
+                case Pro      -> 200;
+                case Ultimate -> Integer.MAX_VALUE; // unlimited
+            };
+            if (requested > maxAllowed) {
+                throw new IllegalArgumentException(
+                        "Your subscription (" + host.getSubscriptionLevel() +
+                                ") only allows up to " + maxAllowed + " invited people."
+                );
+            }
+        }
 
         // 2) Manager (if applicable)
         User manager = Boolean.TRUE.equals(req.getHasManager())
@@ -145,5 +161,6 @@ public class EventService {
         event.setFiles(null); // Empty on creation
 
         return eventRepository.save(event);
+
     }
 }

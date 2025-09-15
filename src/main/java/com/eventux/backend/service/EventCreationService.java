@@ -37,12 +37,12 @@ public class EventCreationService {
     }
 
     public Event createEvent(EventCreationRequest request) {
-        // 🔐 Get the host from the JWT-authenticated user
+        //  Get the host from the JWT-authenticated user
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = auth.getName();
         User host = userRepository.findByEmail(userEmail).orElseThrow();
 
-        // 👥 Manager logic
+        //  Manager logic
         User manager;
         if (request.getManagerEmail() != null && !request.getManagerEmail().isEmpty()) {
             manager = userRepository.findByEmail(request.getManagerEmail())
@@ -51,7 +51,7 @@ public class EventCreationService {
             manager = host;
         }
 
-        // 🏡 Save address
+        //  Save address
         Address address = new Address();
         if (request.getAddress().getCity() == null) {
             throw new IllegalArgumentException("Invalid or missing city");
@@ -62,7 +62,7 @@ public class EventCreationService {
         address.setPostCode(request.getAddress().getPost_code());
         address = addressRepository.save(address);
 
-        // 📅 Create event
+        //  Create event
         Event event = new Event();
         event.setEventName(request.getEventName());
         event.setEventCatgory(EventCategory.valueOf(request.getEventCatgory()));
@@ -72,7 +72,7 @@ public class EventCreationService {
         event.setFiles(null); // set later from manage-event
         event = eventRepository.save(event);
 
-        // 🪑 Save invited guests
+        //  Save invited guests
         List<Invited> inviteds = new ArrayList<>();
         if (request.getInviteList() != null) {
             for (EventCreationRequest.InviteDTO dto : request.getInviteList()) {
@@ -87,7 +87,7 @@ public class EventCreationService {
         }
 
 
-        // 🪑 Save tables
+        //  Save tables
         if (request.getTables() != null) {
             for (EventCreationRequest.TableDTO tableDTO : request.getTables()) {
                 TableEntity table = new TableEntity(tableDTO.getTable_number(), tableDTO.getChair_count());

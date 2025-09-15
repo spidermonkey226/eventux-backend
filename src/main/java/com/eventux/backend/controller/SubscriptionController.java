@@ -41,6 +41,7 @@ public class SubscriptionController {
                     if (patch.getName() != null) existing.setName(patch.getName());
                     if (patch.getLevel() != null) existing.setLevel(patch.getLevel());
                     if (patch.getMaxEvents() != null) existing.setMaxEvents(patch.getMaxEvents());
+                    if (patch.getPrice() != null) existing.setPrice(patch.getPrice());
                     return ResponseEntity.ok(service.save(existing));
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
